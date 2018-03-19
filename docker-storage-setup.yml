@@ -1,0 +1,32 @@
+---
+- hosts: docker-hosts
+
+  tasks:
+  - name: check if storage dev exists
+    stat:
+      path: '{{ docker_storage_dev }}'
+    register: check_device
+    failed_when: not (check_device.stat.exists and check_device.stat.isblk)
+
+  - name: Parition setup
+    include: tasks/create_storage_volume.yml
+
+
+  - name: Create /etc/sysconfig/docker-storage-setup
+    template:
+      src: templates/docker-storage-setup.j2
+      dest: /etc/sysconfig/docker-storage-setup
+      owner: root
+      group: root
+      mode: 'u=rw'
+
+
+  - name: Install docker
+    package:
+      name: docker
+      state: present
+
+
+  - name: Check docker storage
+    stat: path=/dev/docker-vg
+    register: docker_storage

@@ -1,0 +1,4 @@
+[docker-hosts]
+neelix-cloud-node-0.local.lan docker_storage_dev=/dev/sdb
+neelix-cloud-node-1.local.lan docker_storage_dev=/dev/sdb
+neelix-cloud-node-2.local.lan docker_storage_dev=/dev/sdb

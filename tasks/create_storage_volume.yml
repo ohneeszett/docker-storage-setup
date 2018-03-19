@@ -1,0 +1,27 @@
+---
+- name: Wipe all partitions on storage device
+  parted:
+    device: '{{ docker_storage_dev }}'
+    unit: MiB
+  register: part_info
+
+
+- parted:
+    device: '{{ docker_storage_dev }}'
+    number: '{{ item.num }}'
+    state: absent
+  with_items:
+  - "{{ part_info.partitions }}"
+
+
+- parted:
+    device: '{{ docker_storage_dev }}'
+    number: 1
+    flags: [ lvm ]
+    state: present
+
+
+- lvg:
+    vg: docker-vg
+    pvs: /dev/sdb1
+    state: present
